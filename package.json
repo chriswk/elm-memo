@@ -6,9 +6,11 @@
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",
-    "dev": "webpack-dev-server --port 3000"
+    "dev": "webpack-dev-server --port 3000",
+    "setup": "npm install && elm package install"
   },
-  "author": "",
+  "repository": "https://github.com/chriswk/elm-memo",
+  "author": "Christopher Kolstad <elm@chriswk.no>",
   "license": "ISC",
   "dependencies": {
     "basscss": "^8.0.1",
