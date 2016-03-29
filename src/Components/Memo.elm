@@ -4,6 +4,9 @@ import Html exposing (..)
 import Effects exposing (Effects)
 import Components.Tools exposing (partition2)
 import String
+import Random.Array exposing (shuffle)
+import Random exposing (Seed)
+import Array exposing (fromList, toList)
 
 type Action
   = NoOp
@@ -12,6 +15,7 @@ type alias Tile =
   { matched: Bool
   , peeking: Bool
   , name: String
+  , letter: Letter
   }
 
 type alias Letter =
@@ -22,16 +26,15 @@ type alias Letter =
   }
 
 type alias AppModel =
-  { tiles: (List Tile) }
-
-initialModel : AppModel
-initialModel =
-  { tiles = [] }
+  { tileCount : Int
+   , tiles : (List Tile)
+   , seed : Seed
+   }
 
 view : Signal.Address Action -> AppModel -> Html
 view address model =
     let
-        names = String.concat (List.map (\e -> (toString e.name) ++ ", ") greekLetters)
+        names = String.concat (List.map (\e -> (toString e.name) ++ ", ") model.tiles)
     in
         div [] [ text names ]
 
@@ -63,3 +66,18 @@ greekLetters = [ Letter "Α" "α" "άλφα" "Alfa"
     , Letter "Χ" "χ" "χι" "Chi"
     , Letter "Ψ" "ψ" "ψι" "Psi"
     , Letter "Ω" "ω" "ωμέγα" "Omega" ]
+
+nameToTile : String -> Letter -> Tile
+nameToTile = Tile False False
+
+letterToTile : Letter -> Tile
+letterToTile letter = nameToTile letter.westernName letter
+
+tilesList : Seed -> Int -> (List Tile, Seed)
+tilesList curSeed size =
+    let
+        shuffled = shuffle curSeed (fromList greekLetters)
+        newSeed = (snd shuffled)
+        list = List.map letterToTile (List.take size (toList (fst shuffled)))
+    in
+        (list, newSeed)

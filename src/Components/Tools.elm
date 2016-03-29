@@ -1,5 +1,9 @@
 module Components.Tools where
 
+import List
+import Random
+
+
 partition2 : Int -> List a -> List (List a)
 partition2 n list =
   let

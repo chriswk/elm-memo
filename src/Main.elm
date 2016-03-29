@@ -1,13 +1,31 @@
 module Main (..) where
 
+import Signal exposing (Signal, map)
+import Random exposing (Seed)
 import Html exposing (..)
 import Effects exposing (Effects, Never)
 import Task
 import Components.Memo exposing (..)
 import StartApp
+import Random exposing (initialSeed)
+
+initialModel : AppModel
+initialModel =
+  { tileCount = 16
+  , tiles = []
+  , seed = initialSeed 5152 }
+
+startTimeSeed : Signal Seed
+startTimeSeed = Random.initialSeed << round <~ Time.startTime
+
 
 init : ( AppModel, Effects Action )
-init = ( initialModel, Effects.none )
+init =
+    let
+        tiles = tilesList initialModel.seed initialModel.tileCount
+        m = { initialModel | tiles = (fst tiles), seed = (snd tiles) }
+    in ( m, Effects.none )
+
 
 app : StartApp.App AppModel
 app =
